@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -18,7 +17,7 @@ func ServeFile(w http.ResponseWriter, r *http.Request, name string){
 func main() {
     //http.HandleFunc("/", homeHandler)
     
-    fs := http.FileServer(http.Dir("./web"))
+    fs := http.FileServer(http.Dir("./web/ang-client/dist/my-app"))
     http.Handle("/", http.StripPrefix("/", fs))
 
     log.Fatal(http.ListenAndServe(":8080", nil))
