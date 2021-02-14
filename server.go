@@ -1,24 +1,34 @@
 package main
 
 import (
-    "log"
-    "net/http"
-    "fmt"
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
 )
 
-func homeHandler(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, "")
-}
-
-func ServeFile(w http.ResponseWriter, r *http.Request, name string){
-    http.ServeFile(w, r, "") // r.URL.Path[1:])
+func handleRequest() {
+	fs := http.FileServer(http.Dir("./web/ang-client/dist/my-app/"))
+	http.Handle("/", http.StripPrefix("/", fs))
+	http.HandleFunc("/articles", returnAllArticles)
 }
 
 func main() {
-    //http.HandleFunc("/", homeHandler)
-    
-    fs := http.FileServer(http.Dir("./web/ang-client/dist/my-app"))
-    http.Handle("/", http.StripPrefix("/", fs))
+	Articles = []Article{
+		{PokemonName: "Pikachu"},
+		{PokemonName: "Charmander"},
+	}
+	handleRequest()
+	log.Fatal(http.ListenAndServe(":8080", nil))
+}
 
-    log.Fatal(http.ListenAndServe(":8080", nil))
+type Article struct {
+	PokemonName string `json:"Pokemon"`
+}
+
+var Articles []Article
+
+func returnAllArticles(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Endpoint: retturnAllArtticles")
+	json.NewEncoder(w).Encode(Articles)
 }
